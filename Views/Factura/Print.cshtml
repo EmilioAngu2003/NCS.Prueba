@@ -1,0 +1,84 @@
+﻿@model NCS.Prueba.Models.Entities.Factura
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Impresión de Factura N° @Model.NumeroFactura</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        @@media print {
+            body {
+                margin: 0;
+                padding: 0.5in;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        body { font-family: Arial, sans-serif; }
+
+        .container {
+            padding: 30px;
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="bg-light p-3 mb-4">
+            <h1 class="">FACTURA N° @Model.NumeroFactura</h1>
+            <p>Fecha de Emisión: @Model.Fecha.ToShortDateString()</p>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-6">
+                <strong>Cliente:</strong> @Model.Cliente?.Nombre <br />
+                <strong>NIF:</strong> @Model.Cliente?.NIF <br />
+            </div>
+            <div class="col-6 text-end">
+                <strong>Domicilio:</strong> @Model.Cliente?.Domicilio, @Model.Cliente?.Poblacion <br />
+                <strong>C.P.:</strong> @Model.Cliente?.CodigoPostal (@Model.Cliente?.Provincia) <br />
+            </div>
+        </div>
+
+        <h3 class="mb-3">Detalle de Productos/Servicios</h3>
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr class="table-light">
+                    <th>Concepto</th>
+                    <th class="text-end">Unidades</th>
+                    <th class="text-end">Precio (€)</th>
+                    <th class="text-end">Importe (€)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var linea in Model.FacturaLineas)
+                {
+                    <tr>
+                        <td>@linea.Concepto</td>
+                        <td class="text-end">@linea.Unidades</td>
+                        <td class="text-end">@linea.Precio.ToString("N2")</td>
+                        <td class="text-end">@linea.Importe.ToString("N2")</td>
+                    </tr>
+                }
+                <tr class="table-light">
+                    <td colspan="3" class="text-end">TOTAL FACTURA</td>
+                    <td class="text-end">@Model.Total.ToString("N2") €</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="no-print mt-4 text-center">
+            <button onclick="window.print()" class="btn btn-info btn-lg">🖨️ Imprimir Factura</button>
+            <a asp-action="Details" asp-route-id="@Model.NumeroFactura" class="btn btn-secondary">Volver a la Factura</a>
+        </div>
+    </div>
+</body>
+</html>

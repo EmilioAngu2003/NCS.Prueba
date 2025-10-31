@@ -1,0 +1,65 @@
+﻿@using System.Text.RegularExpressions
+@model NCS.Prueba.Models.Entities.FacturaLinea
+
+@{
+    var prefix = ViewData.TemplateInfo.HtmlFieldPrefix;
+    var match = Regex.Match(prefix, @"\[(.*?)\]");
+    var index = match.Success && match.Groups.Count > 1 ? match.Groups[1].Value : "0";
+
+    var headingId = $"heading-{index}";
+    var collapseId = $"collapse-{index}";
+    var targetId = $"#{collapseId}";
+
+    var conceptoDisplay = Model.Concepto;
+    Model.PrecioString = Model.Precio == null ? "" : Model.Precio.ToString("N2");
+}
+
+<div data-linea-id="@Model.Id" data-index="@index">
+
+    <input type="hidden" name="FacturaLineas.Index" value="@index" />
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.IdFactura)
+
+    <div class="accordion-item mb-2">
+
+        <h2 class="accordion-header" id="@headingId">
+            <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="@targetId" aria-expanded="false" aria-controls="@collapseId">
+
+                <span class="me-auto text-truncate" data-concepto-display>
+                    @(string.IsNullOrEmpty(conceptoDisplay) ? "Nueva Línea" : conceptoDisplay)
+                </span>
+            </button>
+        </h2>
+
+        <div id="@collapseId" class="accordion-collapse collapse" aria-labelledby="@headingId" data-bs-parent="#facturaAccordion">
+            <div class="accordion-body p-2">
+                <div class="row">
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Concepto</label>
+                        @Html.TextBoxFor(model => model.Concepto, new { @class = "form-control", placeholder = "Concepto" })
+                        <span asp-validation-for="Concepto" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-6 mb-3">
+                        <label class="form-label">Unidades</label>
+                        @Html.TextBoxFor(model => model.Unidades, new { @class = "form-control text-end", type = "number", placeholder = "0" })
+                        <span asp-validation-for="Unidades" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-6 mb-3">
+                        <label class="form-label">Precio</label>
+                        @Html.TextBoxFor(model => model.PrecioString, new { @class = "form-control text-end", type = "text", placeholder = "0,00" })
+                        <span asp-validation-for="PrecioString" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-sm btn-danger eliminar-linea">
+                            <i class="bi bi-trash"></i> Eliminar Línea
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

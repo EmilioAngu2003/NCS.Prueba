@@ -1,0 +1,113 @@
+﻿@using NCS.Prueba.Models.Entities
+@model NCS.Prueba.Models.Entities.Factura
+
+@{
+    ViewData["Title"] = "Crear Nueva Factura";
+    var clientesSelectList = ViewBag.ClientesList as SelectList;
+}
+
+<h1>Crear Nueva Factura</h1>
+<hr />
+
+<div class="row">
+    <form asp-action="Create">
+
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                @Html.DropDownList("IdCliente", clientesSelectList, "-- Seleccione un cliente --", new { @class = "form-control" })
+                <label asp-for="IdCliente"></label>
+                <span asp-validation-for="IdCliente" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Fecha" type="date" class="form-control" />
+                <label asp-for="Fecha"></label>
+                <span asp-validation-for="Fecha" class="text-danger"></span>
+            </div>
+
+        </div>
+
+        <div class="form-group mt-4 d-flex gap-1 flex-column d-sm-block">
+            <input type="submit" value="Crear Factura" class="btn btn-primary" />
+            <button type="button" class="btn btn-success" id="agregarLineaBtn">
+                <i class="bi bi-plus-lg"></i>
+                Agregar Línea
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar y Volver</a>
+        </div>
+        
+        <h3 class="mt-4">Líneas de Detalle</h3>
+        <span asp-validation-for="FacturaLineas" class="text-danger"></span>
+
+        <div class="accordion" id="facturaAccordion">
+            @Html.EditorFor(model => model.FacturaLineas)
+        </div>
+    </form>
+</div>
+
+<script id="lineaFacturaTemplate" type="text/template">
+    @{
+        var newLinea = new FacturaLinea
+            {
+                Id = 0,
+            };
+
+            ViewData.TemplateInfo.HtmlFieldPrefix = "FacturaLineas[__INDEX__]";
+    }
+
+    @await Html.PartialAsync("EditorTemplates/FacturaLinea", newLinea)
+
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        function getNextIndex() {
+            var maxIndex = -1;
+            $('#facturaAccordion').find('[data-index]').each(function () {
+                var currentIndex = parseInt($(this).data('index'));
+                if (!isNaN(currentIndex) && currentIndex > maxIndex) {
+                    maxIndex = currentIndex;
+                }
+            });
+            return maxIndex + 1;
+        }
+
+        $(document).on('input', 'input[name$=".Concepto"]', function() {
+            var newConcepto = $(this).val();
+            var $lineaContainer = $(this).closest('[data-index]');
+
+            $lineaContainer.find('[data-concepto-display]').text(newConcepto || "Nueva Línea");
+            $lineaContainer.find('input[name$=".Concepto"]').not(this).val(newConcepto);
+        });
+
+        $(function () {
+
+            $('#agregarLineaBtn').click(function () {
+                var nextAvailableIndex = getNextIndex();
+                var templateHtml = $('#lineaFacturaTemplate').html();
+                var newRowHtml = templateHtml.replace(/__INDEX__/g, nextAvailableIndex);
+                
+                var $newRow = $(newRowHtml).appendTo('#facturaAccordion');
+                $newRow.find('input[type="text"]').first().focus();
+            });
+
+            $('#facturaAccordion').on('click', '.eliminar-linea', function (e) {
+                e.preventDefault();
+                var $fila = $(this).closest('[data-index]');
+                if (confirm("¿Estás seguro de que quieres eliminar esta línea de factura?")) {
+                    $fila.remove();
+                }
+            });
+        });
+
+    </script>
+}
