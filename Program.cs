@@ -9,8 +9,11 @@ using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var conString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseSqlServer(conString)
 );
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
