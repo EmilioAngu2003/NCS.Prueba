@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using NCS.Prueba.Data;
+using NCS.Prueba.Extensions;
 using NCS.Prueba.Repositories.Implementation;
 using NCS.Prueba.Repositories.Interfaces;
 using NCS.Prueba.Services.Implementation;
@@ -62,5 +63,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MigrateDatabase();
 
 app.Run();
