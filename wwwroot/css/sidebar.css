@@ -1,0 +1,84 @@
+﻿@media (min-width: 992px) {
+
+    :root {
+        --sidebar-width: 280px;
+        --sidebar-mini-width: 4.5rem;
+        --duration-sidebar: 0.3s;
+    }
+
+    #sidebar-main {
+        width: var(--sidebar-width);
+        position: relative;
+        visibility: visible !important;
+        transform: none !important;
+        transition: width var(--duration-sidebar) ease;
+    }
+
+        #sidebar-main,
+        #sidebar-main .offcanvas-body > div {            
+            transition-property: width, padding;
+            transition: var(--duration-sidebar) ease;
+        }
+
+            #sidebar-main .offcanvas-body > div {
+                padding: 1rem;
+            }
+
+            #sidebar-main.sidebar-mini,
+            #sidebar-main.sidebar-mini .offcanvas-body > div {
+                width: 4.5rem !important;
+                padding: 0 !important;
+            }
+
+            #sidebar-main .nav-link {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                white-space: nowrap;
+                overflow: hidden;
+                transition-property: padding, border-radius, justify-content;
+                transition: var(--duration-sidebar) ease;
+            }
+
+            #sidebar-main.sidebar-mini .nav-link {
+                padding: 1rem !important;
+                border-radius: 0 !important;
+            }
+
+            #sidebar-main .offcanvas-body hr {
+                transition-property: margin;
+                transition: var(--duration-sidebar) ease;
+            }
+
+            #sidebar-main.sidebar-mini .offcanvas-body hr {
+                margin: 0;
+            }
+
+            #sidebar-main .nav-link span {
+                display: inline-block;
+                flex-grow: 1;
+                opacity: 1;
+                max-width: 200px;
+                transition: opacity var(--duration-sidebar) ease, max-width var(--duration-sidebar) ease, transform var(--duration-sidebar) ease;
+                transform-origin: left;
+            }
+
+            #sidebar-main.sidebar-mini .nav-link span {
+                opacity: 0;
+                max-width: 0;
+                pointer-events: none;
+                transform: scaleX(0);
+            }
+
+            #sidebar-main .nav-link svg {
+                flex-shrink: 0;
+                transition-property: width, height, margin;
+                transition: var(--duration-sidebar) ease;
+            }
+
+            #sidebar-main.sidebar-mini .nav-link svg {
+                margin-right: 0 !important;
+                width: 24px;
+                height: 24px;
+            }
+}
