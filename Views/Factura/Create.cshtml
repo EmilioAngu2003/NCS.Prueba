@@ -68,44 +68,15 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <script>
+    <script type="module">
 
-        function getNextIndex() {
-            var maxIndex = -1;
-            $('#facturaAccordion').find('[data-index]').each(function () {
-                var currentIndex = parseInt($(this).data('index'));
-                if (!isNaN(currentIndex) && currentIndex > maxIndex) {
-                    maxIndex = currentIndex;
-                }
-            });
-            return maxIndex + 1;
-        }
-
-        $(document).on('input', 'input[name$=".Concepto"]', function() {
-            var newConcepto = $(this).val();
-            var $lineaContainer = $(this).closest('[data-index]');
-
-            $lineaContainer.find('[data-concepto-display]').text(newConcepto || "Nueva Línea");
-            $lineaContainer.find('input[name$=".Concepto"]').not(this).val(newConcepto);
-        });
+        import { inicializarGestionDetalles } from '/js/factura-detalle.js';
 
         $(function () {
-
-            $('#agregarLineaBtn').click(function () {
-                var nextAvailableIndex = getNextIndex();
-                var templateHtml = $('#lineaFacturaTemplate').html();
-                var newRowHtml = templateHtml.replace(/__INDEX__/g, nextAvailableIndex);
-                
-                var $newRow = $(newRowHtml).appendTo('#facturaAccordion');
-                $newRow.find('input[type="text"]').first().focus();
-            });
-
-            $('#facturaAccordion').on('click', '.eliminar-linea', function (e) {
-                e.preventDefault();
-                var $fila = $(this).closest('[data-index]');
-                if (confirm("¿Estás seguro de que quieres eliminar esta línea de factura?")) {
-                    $fila.remove();
-                }
+            inicializarGestionDetalles({
+                accordionId: '#facturaAccordion',
+                btnAgregarId: '#agregarLineaBtn',
+                templateId: '#lineaFacturaTemplate'
             });
         });
 
